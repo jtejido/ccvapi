@@ -136,6 +136,7 @@ type result struct {
 }
 
 type TopResult struct {
+	Valid        bool
 	Name         string
 	Error        Error
 	PatternMatch int
@@ -253,6 +254,6 @@ func Validate(creditCardNumber string) *TopResult {
 	}
 
 	e = Error{SUCCS, "Success"}
-	return &TopResult{Name: results[0].name, PatternMatch: results[0].patternMatch, LengthMatch: results[0].lengthMatch, Error: e}
+	return &TopResult{Valid: true, Name: results[0].name, PatternMatch: results[0].patternMatch, LengthMatch: results[0].lengthMatch, Error: e}
 
 }

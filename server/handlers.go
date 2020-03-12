@@ -46,7 +46,7 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 
 	result := validation.Validate(rq.PAN)
 	w.Header().Set("Content-Type", "application/json")
-	res, err := json.Marshal(&Response{Valid: true, Issuer: result.Name, PatternMatch: result.PatternMatch, LengthMatch: result.LengthMatch, Error: result.Error})
+	res, err := json.Marshal(&Response{Valid: result.Valid, Issuer: result.Name, PatternMatch: result.PatternMatch, LengthMatch: result.LengthMatch, Error: result.Error})
 	if err != nil {
 		panic(err)
 	}
