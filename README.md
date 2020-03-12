@@ -86,9 +86,9 @@ The response is sent as a json data as well.
 **Error** field is composed of Error # and a message.
 
 ```
-  SUCCS  // Success
-  UKNWN  // General failure, unknown issuer, failed match and length
-  INVDN  // Failed verification
+  SUCCS  // Success (Valid is true, and the top Issuer match is given)
+  UKNWN  // General failure, unknown issuer, failed match and length (Valid is false)
+  INVDN  // Failed verification, but given with a possible Issuer/Bank match (Valid is false)
 ```
 
 **PatternMatch** is how much a pattern matches the card's pattern, it sends out the Issuer with the largest pattern match (e.g. Visa matches at the first digit, which is 4, but an Elo matches a number with 401178 more than a Visa)
