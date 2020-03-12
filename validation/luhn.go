@@ -1,4 +1,4 @@
-package sanitation
+package validation
 
 import "strconv"
 

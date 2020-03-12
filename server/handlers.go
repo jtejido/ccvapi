@@ -2,7 +2,7 @@ package server
 
 import (
 	"encoding/json"
-	"github.com/jtejido/ccvapi/sanitation"
+	"github.com/jtejido/ccvapi/validation"
 	"net/http"
 )
 
@@ -44,7 +44,7 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	result := sanitation.Validate(rq.PAN) // get the type first and see if it passes
+	result := validation.Validate(rq.PAN) // get the type first and see if it passes
 	w.Header().Set("Content-Type", "application/json")
 	res, err := json.Marshal(&Response{Valid: true, Issuer: result.Name, PatternMatch: result.PatternMatch, LengthMatch: result.LengthMatch, Error: result.Error})
 	if err != nil {

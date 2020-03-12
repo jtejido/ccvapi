@@ -5,8 +5,8 @@ import (
 	"flag"
 	"github.com/jtejido/ccvapi/config"
 	"github.com/jtejido/ccvapi/logging"
-	"github.com/jtejido/ccvapi/sanitation"
 	"github.com/jtejido/ccvapi/server"
+	"github.com/jtejido/ccvapi/validation"
 	"net/http"
 	"os"
 	"os/signal"
@@ -33,7 +33,7 @@ func main() {
 	flag.StringVar(&conf.Http.CardTypesPath, "card-path", conf.Http.CardTypesPath, "Location of the card types json file.")
 	flag.Parse()
 
-	err = sanitation.LoadCards(conf.Http.CardTypesPath)
+	err = validation.LoadCards(conf.Http.CardTypesPath)
 	if err != nil {
 		panic(err)
 	}

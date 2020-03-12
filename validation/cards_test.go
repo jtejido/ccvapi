@@ -1,4 +1,4 @@
-package sanitation
+package validation
 
 import (
 	"strconv"
@@ -85,7 +85,7 @@ func TestVisaNumbers(t *testing.T) {
 				return r
 			}, v)
 
-			if GetCreditCardType(s)[0].Name != "Visa" {
+			if getCreditCardType(s)[0].name != "Visa" {
 				t.Errorf("Mismatch. Case %d, Card is a Visa", i)
 			}
 
@@ -135,7 +135,7 @@ func TestMasterCardNumbers(t *testing.T) {
 				return r
 			}, v)
 
-			if GetCreditCardType(s)[0].Name != "MasterCard" {
+			if getCreditCardType(s)[0].name != "MasterCard" {
 				t.Errorf("Mismatch. Case %d, Card is a MasterCard", i)
 			}
 
