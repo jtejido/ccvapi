@@ -51,13 +51,14 @@ go get github.com/jtejido/ccvapi
 go build
 ./ccvapi -h
   -access-log string
-        Location of the logfile. (default "error.log")
+        Location of the logfile. (default "access.log")
   -card-path string
         Location of the card types json file. (default "card_types.json")
   -error-log string
-        Location of the logfile. (default "access.log")
+        Location of the logfile. (default "error.log")
   -host int
         The local port to listen to. (default 8080)
+
 ```
 
 ## Sending Request

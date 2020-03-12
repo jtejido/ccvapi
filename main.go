@@ -28,8 +28,8 @@ func main() {
 
 	// cmd flags
 	flag.IntVar(&conf.Http.Host, "host", conf.Http.Host, "The local port to listen to.")
-	flag.StringVar(&conf.Http.AccessLog, "error-log", conf.Http.AccessLog, "Location of the logfile.")
-	flag.StringVar(&conf.Http.ErrorLog, "access-log", conf.Http.ErrorLog, "Location of the logfile.")
+	flag.StringVar(&conf.Http.ErrorLog, "error-log", conf.Http.ErrorLog, "Location of the logfile.")
+	flag.StringVar(&conf.Http.AccessLog, "access-log", conf.Http.AccessLog, "Location of the logfile.")
 	flag.StringVar(&conf.Http.CardTypesPath, "card-path", conf.Http.CardTypesPath, "Location of the card types json file.")
 	flag.Parse()
 
