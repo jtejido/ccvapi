@@ -1,6 +1,9 @@
 # ccvapi
 Credit Card Number verifier API
 
+https://ccvapi.cleverapps.io/card/api/verify
+
+
 This is a RESTful API that verifies credit card numbers (Issuers and Checksum) via Luhn Algorithm.
 
 
@@ -70,6 +73,8 @@ Verifying a PAN can be done via POST:
 ```
 curl --header "Content-Type: application/json" --request POST --data '{ "PAN": "2222400050000009" }' http://localhost:8080/card/api/verify
 ```
+
+A demo app is hosted at https://ccvapi.cleverapps.io/card/api/verify, you can try and send a POST request!
 
 ## Response
 
