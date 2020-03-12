@@ -10,14 +10,22 @@ import (
 	"strings"
 )
 
+type PatternType int
+
 const (
 	Int PatternType = iota
 	Range
 )
 
 const (
-	UnknownNumber = "Unknown Card Number" // Unknown Issuer
-	InvalidNumber = "Invalid Number"      // Failed Luhn verification
+	SUCCS int = iota // Success
+	UKNWN            // General failure, unknown issuer, failed match and length
+	INVDN            // Failed verification
+)
+
+const (
+	UnknownNumber = "Unknown Card Number"                // Unknown Issuer
+	InvalidNumber = "Number: Invalid Number, Issuer: %s" // Failed Luhn verification
 )
 
 var (
@@ -25,8 +33,6 @@ var (
 )
 
 type CardTypes []CardConfig
-
-type PatternType int
 
 type CardConfig struct {
 	Name     string        `json:"name"`
@@ -131,9 +137,14 @@ type result struct {
 
 type TopResult struct {
 	Name         string
-	Error        string
+	Error        Error
 	PatternMatch int
 	LengthMatch  int
+}
+
+type Error struct {
+	ErrorNo int
+	Message string
 }
 
 // Load card types given a path to the json file
@@ -227,20 +238,21 @@ func isValidInputType(cardNumber string) bool {
 
 func Validate(creditCardNumber string) *TopResult {
 	results := getCreditCardType(creditCardNumber)
-	error := ""
+	var e Error
 	if len(results) == 0 {
-		error = UnknownNumber
-		return &TopResult{Error: error}
+		e = Error{UKNWN, UnknownNumber}
+		return &TopResult{Name: "Unknown", Error: e}
 	}
 
 	var luhn Luhn
+	sort.Sort(results)
 
 	if !luhn.IsValid(creditCardNumber) {
-		error = InvalidNumber
-		return &TopResult{Error: error}
+		e = Error{INVDN, fmt.Sprintf(InvalidNumber, results[0].name)}
+		return &TopResult{Name: "Unknown", Error: e}
 	}
 
-	sort.Sort(results)
-	return &TopResult{Name: results[0].name, PatternMatch: results[0].patternMatch, LengthMatch: results[0].lengthMatch, Error: error}
+	e = Error{SUCCS, "Success"}
+	return &TopResult{Name: results[0].name, PatternMatch: results[0].patternMatch, LengthMatch: results[0].lengthMatch, Error: e}
 
 }

@@ -71,14 +71,29 @@ Verifying a PAN can be done via POST:
 curl --header "Content-Type: application/json" --request POST --data '{ "PAN": "2222400050000009" }' http://localhost:8080/card/api/verify
 ```
 
-And will send the response in json format.
+## Response
+
+The response is sent as a json data as well.
+
 ```
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100   110  100    81  100    29   4764   1705 --:--:-- --:--:-- --:--:--
 
-{"Valid":true,"Issuer":"MasterCard","Error":"","PatternMatch":4,"LengthMatch":16}
+{"Valid":true,"Issuer":"MasterCard","Error":{"ErrorNo":0,"Message":"Success"},"PatternMatch":4,"LengthMatch":16}
 ```
+
+**Error** field is composed of Error # and a message.
+
+```
+  SUCCS  // Success
+  UKNWN  // General failure, unknown issuer, failed match and length
+  INVDN  // Failed verification
+```
+
+**PatternMatch** is how much a pattern matches the card's pattern, it sends out the Issuer with the largest pattern match (e.g. Visa matches at the first digit, which is 4, but an Elo matches a number with 401178 more than a Visa)
+
+The top result is based on PatternMatch, **LengthMatch** is used to describe which length pattern have passed from the given number, say, an *Elo*-like number that starts with 401178 will not match *Elo* if it's 19-digit long (as Elo is 16-digit long, unless changed from the json file), but *Visa* would, hence it'll be considered *Visa*.
 
 ## Built-in Card Issuers
 

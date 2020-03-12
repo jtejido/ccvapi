@@ -20,7 +20,7 @@ type Request struct {
 type Response struct {
 	Valid        bool
 	Issuer       string
-	Error        string
+	Error        validation.Error
 	PatternMatch int
 	LengthMatch  int
 }
@@ -44,7 +44,7 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	result := validation.Validate(rq.PAN) // get the type first and see if it passes
+	result := validation.Validate(rq.PAN)
 	w.Header().Set("Content-Type", "application/json")
 	res, err := json.Marshal(&Response{Valid: true, Issuer: result.Name, PatternMatch: result.PatternMatch, LengthMatch: result.LengthMatch, Error: result.Error})
 	if err != nil {
