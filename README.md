@@ -1,7 +1,7 @@
 # ccvapi
 Credit Card Number verifier API
 
-This is an Restful API that verifies credit card numbers (Issuers and Checksum) via Luhn Algorithm.
+This is a RESTful API that verifies credit card numbers (Issuers and Checksum) via Luhn Algorithm.
 
 
 ## Card Types
