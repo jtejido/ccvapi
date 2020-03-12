@@ -61,7 +61,7 @@ go build
 
 ```
 
-## Sending Request
+## Request
 
 Once ran, it will listen on the 8080 port of the localhost, (http://localhost:8080/card/api/verify).
 
