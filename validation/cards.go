@@ -24,7 +24,6 @@ var (
 	cardTypes CardTypes
 )
 
-// If time allows, this should be loaded onto an in-mem KV-store
 type CardTypes []CardConfig
 
 type PatternType int
@@ -78,15 +77,11 @@ func (cp *CardPattern) matches(cardNumber string) bool {
 				return i >= min && i <= max
 			}
 		}
-
-		return false
-
 	} else {
 		patt := strconv.Itoa(cp.Value.(IntValue).Val)
 		if len(patt) <= len(cardNumber) {
 			return patt == cardNumber[:len(patt)]
 		}
-
 	}
 
 	return false
@@ -179,20 +174,20 @@ func getCreditCardType(cardNumber string) results {
 		var lengthMatch bool
 
 		// We can't deal with lengths as range of min..max because some cards have discrete values like Discover/Diner's
-
 		for _, cl := range cc.Lengths {
 			if cl == clen {
 				lengthMatch = true
 			}
 		}
 
-		// If we don't get any math, don't bother to continue with pattern match.
+		// If we don't get any match, don't bother to go on.
 		if !lengthMatch {
 			continue
 		}
 
 		// Issuers/Banks have multiple patterns (especially Elo, which could start with a 4 or 5, like Visa or MC)
-		// So we'll check the card number against these patterns. If a single pattern matches then stop, the card is of this type.
+		// So we'll check the card number against these patterns (provided they've passed the length matching).
+		// If a single pattern matches then stop, the card is of this type.
 		for i := 0; i < len(cc.Patterns); i++ {
 			pattern := cc.Patterns[i]
 
