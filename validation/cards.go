@@ -24,12 +24,16 @@ const (
 )
 
 const (
-	UnknownNumber = "Unknown Card Number."                                     // Unknown Issuer
-	InvalidNumber = "Issuer is found but number failed checksum verification." // Failed Luhn verification
+	ok_s  = "Success"
+	unk_s = "Unknown Card Number."                                     // Unknown Issuer
+	inv_s = "Issuer is found but number failed checksum verification." // Failed Luhn verification
 )
 
 var (
 	cardTypes CardTypes
+	ok_err    = Error{SUCCS, ok_s}
+	unk_err   = Error{UKNWN, unk_s}
+	inv_err   = Error{INVDN, inv_s}
 )
 
 type CardTypes []CardConfig
@@ -239,21 +243,17 @@ func isValidInputType(cardNumber string) bool {
 
 func Validate(creditCardNumber string) *TopResult {
 	results := getCreditCardType(creditCardNumber)
-	var e Error
 	if len(results) == 0 {
-		e = Error{UKNWN, UnknownNumber}
-		return &TopResult{Name: "Unknown", Error: e}
+		return &TopResult{Name: "Unknown", Error: unk_err}
 	}
 
 	var luhn Luhn
 	sort.Sort(results)
 
 	if !luhn.IsValid(creditCardNumber) {
-		e = Error{INVDN, InvalidNumber}
-		return &TopResult{Name: results[0].name, PatternMatch: results[0].patternMatch, LengthMatch: results[0].lengthMatch, Error: e}
+		return &TopResult{Name: results[0].name, PatternMatch: results[0].patternMatch, LengthMatch: results[0].lengthMatch, Error: inv_err}
 	}
 
-	e = Error{SUCCS, "Success"}
-	return &TopResult{Valid: true, Name: results[0].name, PatternMatch: results[0].patternMatch, LengthMatch: results[0].lengthMatch, Error: e}
+	return &TopResult{Valid: true, Name: results[0].name, PatternMatch: results[0].patternMatch, LengthMatch: results[0].lengthMatch, Error: ok_err}
 
 }
