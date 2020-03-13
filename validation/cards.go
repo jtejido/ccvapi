@@ -171,23 +171,20 @@ func (cp *CardPattern) UnmarshalJSON(b []byte) error {
 			cp.Value = RangeValue{int(min), int(max)}
 			return nil
 		}
-
-	} else {
-		cp.T = Int
-		i, err := strconv.Atoi(strings.TrimSpace(string(b)))
-		if err != nil {
-			return fmt.Errorf(pos_val_s, patterns_s)
-		}
-
-		if i < 0 {
-			return fmt.Errorf(no_neg_val_s, patterns_s)
-		}
-
-		cp.Value = IntValue{i}
-		return nil
 	}
 
-	return fmt.Errorf(parse_err_s, patterns_s)
+	i, err := strconv.Atoi(strings.TrimSpace(string(b)))
+	if err != nil {
+		return fmt.Errorf(pos_val_s, patterns_s)
+	}
+
+	if i < 0 {
+		return fmt.Errorf(no_neg_val_s, patterns_s)
+	}
+
+	cp.T = Int
+	cp.Value = IntValue{i}
+	return nil
 }
 
 type results []*result
