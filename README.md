@@ -13,7 +13,7 @@ This is a RESTful API that verifies credit card numbers (Issuers and Checksum) v
 
 ## Card Types
 
-All Card Types are located in the included card_types.json:
+All Card Types are located in the included [card_types.json](https://github.com/jtejido/ccvapi/blob/master/card_types.json):
 
 ```
 [
@@ -106,7 +106,7 @@ The top result is based on PatternMatch, **LengthMatch** is used to describe whi
 
 ## Built-in Card Issuers
 
-See this [json file](https://github.com/jtejido/ccvapi/card_types.json)
+See this [json file](https://github.com/jtejido/ccvapi/blob/master/card_types.json)
 
 | Brand              |
 |--------------------|
