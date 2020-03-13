@@ -1,6 +1,11 @@
 # ccvapi
 Credit Card Number verifier API
 
+[![Build Status](https://travis-ci.org/jtejido/ccvapi.svg?branch=master)](https://travis-ci.org/jtejido/ccvapi) 
+[![codecov](https://codecov.io/gh/jtejido/ccvapi/branch/master/graph/badge.svg)](https://codecov.io/gh/jtejido/ccvapi)
+[![MIT license](http://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
+
+
 https://ccvapi.cleverapps.io/card/api/verify
 
 
