@@ -12,28 +12,44 @@ import (
 
 type PatternType int
 
+// PatternTypes
 const (
 	Int PatternType = iota
 	Range
 )
 
+// returned error numbers
 const (
 	SUCCS int = iota // Success
 	UKNWN            // General failure, unknown issuer, failed match and length
 	INVDN            // Failed verification
 )
 
+// returned errors
 const (
 	ok_s  = "Success"
 	unk_s = "Unknown Card Number."                                     // Unknown Issuer
 	inv_s = "Issuer is found but number failed checksum verification." // Failed Luhn verification
+
+)
+
+// parsing errors
+const (
+	lengths_s     = "Lengths:"
+	patterns_s    = "Patterns:"
+	pos_val_s     = "%s Value should be a valid positive integer."
+	empty_range_s = "%s Unable to parse an empty range []."
+	no_max_s      = "%s Unable to parse range without max value [min, max]."
+	no_neg_val_s  = "%s Value cannot be a negative integer."
+	parse_err_s   = "%s Unable to parse value."
 )
 
 var (
 	cardTypes CardTypes
-	ok_err    = Error{SUCCS, ok_s}
-	unk_err   = Error{UKNWN, unk_s}
-	inv_err   = Error{INVDN, inv_s}
+	// error types
+	ok_err  = Error{SUCCS, ok_s}
+	unk_err = Error{UKNWN, unk_s}
+	inv_err = Error{INVDN, inv_s}
 )
 
 type CardTypes []CardConfig
@@ -41,8 +57,37 @@ type CardTypes []CardConfig
 type CardConfig struct {
 	Name     string        `json:"name"`
 	Patterns []CardPattern `json:"patterns"`
-	Lengths  []int         `json:"lengths"`
+	Lengths  Lengths       `json:"lengths"`
 	Error    string
+}
+
+type Lengths []int
+
+// Make sure we're on top of the crazy lengths.
+func (l *Lengths) UnmarshalJSON(b []byte) error {
+	if b[0] == '[' && b[len(b)-1] == ']' {
+		substr := strings.Split(string(b[1:len(b)-1]), ",")
+		lengths := make(Lengths, len(substr))
+		for _, s := range substr {
+			i, err := strconv.Atoi(strings.TrimSpace(s))
+			if err != nil {
+				return fmt.Errorf(pos_val_s, lengths_s)
+			}
+
+			if i < 0 {
+				return fmt.Errorf(no_neg_val_s, lengths_s)
+			}
+
+			lengths = append(lengths, i)
+		}
+
+		*l = lengths
+
+		return nil
+	}
+
+	return fmt.Errorf(parse_err_s, lengths_s)
+
 }
 
 type RangeValue struct {
@@ -98,31 +143,51 @@ func (cp *CardPattern) matches(cardNumber string) bool {
 
 }
 
-// The CardPattern accepts values of homogenous type (int or []int), we have to unmarshal this properly.
+// The CardPattern accepts values of homogenous type (int or []int), we'll make sure we're on top of the crazy patterns.
 func (cp *CardPattern) UnmarshalJSON(b []byte) error {
-	if b[0] == '[' {
+	if b[0] == '[' && b[len(b)-1] == ']' {
 		cp.T = Range
 		substr := strings.Split(string(b[1:len(b)-1]), ",")
-		var err error
-		min, err := strconv.Atoi(strings.TrimSpace(substr[0]))
-		if err != nil {
-			return err
+		switch l := len(substr); l {
+		case 0:
+			return fmt.Errorf(empty_range_s, patterns_s)
+		case 1:
+			return fmt.Errorf(no_max_s, patterns_s)
+		default:
+			var err error
+			min, err := strconv.Atoi(strings.TrimSpace(substr[0]))
+			if err != nil {
+				return fmt.Errorf(pos_val_s, patterns_s)
+			}
+			max, err := strconv.Atoi(strings.TrimSpace(substr[1]))
+			if err != nil {
+				return fmt.Errorf(pos_val_s, patterns_s)
+			}
+
+			if min < 0 || max < 0 {
+				return fmt.Errorf(no_neg_val_s, patterns_s)
+			}
+
+			cp.Value = RangeValue{int(min), int(max)}
+			return nil
 		}
-		max, err := strconv.Atoi(strings.TrimSpace(substr[1]))
-		if err != nil {
-			return err
-		}
-		cp.Value = RangeValue{int(min), int(max)}
+
 	} else {
 		cp.T = Int
 		i, err := strconv.Atoi(strings.TrimSpace(string(b)))
 		if err != nil {
-			return err
+			return fmt.Errorf(pos_val_s, patterns_s)
 		}
+
+		if i < 0 {
+			return fmt.Errorf(no_neg_val_s, patterns_s)
+		}
+
 		cp.Value = IntValue{i}
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf(parse_err_s, patterns_s)
 }
 
 type results []*result
@@ -139,6 +204,7 @@ type result struct {
 	lengthMatch  int
 }
 
+// The Top Result container
 type TopResult struct {
 	Valid        bool
 	Name         string
@@ -147,6 +213,7 @@ type TopResult struct {
 	LengthMatch  int
 }
 
+// Error container
 type Error struct {
 	ErrorNo int
 	Message string
@@ -169,6 +236,7 @@ func LoadCards(path string) error {
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
+	// ensure that it unmarshals crazy json properly.
 	if err := json.Unmarshal(byteValue, &cardTypes); err != nil {
 		return err
 	}
