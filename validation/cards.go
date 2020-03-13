@@ -311,17 +311,20 @@ func isValidInputType(cardNumber string) bool {
 
 func Validate(creditCardNumber string) *TopResult {
 	results := getCreditCardType(creditCardNumber)
-	if len(results) == 0 {
+	if results == nil || len(results) == 0 {
 		return &TopResult{Name: "Unknown", Error: unk_err}
 	}
 
 	var luhn Luhn
 	sort.Sort(results)
+	name := results[0].name
+	pm := results[0].patternMatch
+	lm := results[0].lengthMatch
 
 	if !luhn.IsValid(creditCardNumber) {
-		return &TopResult{Name: results[0].name, PatternMatch: results[0].patternMatch, LengthMatch: results[0].lengthMatch, Error: inv_err}
+		return &TopResult{Name: name, PatternMatch: pm, LengthMatch: lm, Error: inv_err}
 	}
 
-	return &TopResult{Valid: true, Name: results[0].name, PatternMatch: results[0].patternMatch, LengthMatch: results[0].lengthMatch, Error: ok_err}
+	return &TopResult{Valid: true, Name: name, PatternMatch: pm, LengthMatch: lm, Error: ok_err}
 
 }
