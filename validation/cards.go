@@ -249,7 +249,7 @@ func Validate(creditCardNumber string) *TopResult {
 	sort.Sort(results)
 
 	if !luhn.IsValid(creditCardNumber) {
-		e = Error{INVDN, fmt.Sprintf(InvalidNumber, results[0].name)}
+		e = Error{INVDN, InvalidNumber}
 		return &TopResult{Name: results[0].name, PatternMatch: results[0].patternMatch, LengthMatch: results[0].lengthMatch, Error: e}
 	}
 
