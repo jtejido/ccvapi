@@ -24,8 +24,8 @@ const (
 )
 
 const (
-	UnknownNumber = "Unknown Card Number"                // Unknown Issuer
-	InvalidNumber = "Number: Invalid Number, Issuer: %s" // Failed Luhn verification
+	UnknownNumber = "Unknown Card Number."                                     // Unknown Issuer
+	InvalidNumber = "Issuer is found but number failed checksum verification." // Failed Luhn verification
 )
 
 var (
